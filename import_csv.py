@@ -14,10 +14,10 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 # Caminho do arquivo CSV dentro do contêiner
-csv_file = "/app/cbo.csv"
+csv_file = "/app/cbo.csv" 
 
 # Lendo e inserindo dados no banco
-with open(csv_file, mode="r", encoding="utf-8") as file:
+with open(csv_file, mode="r", encoding="ISO-8859-1") as file:
     reader = csv.reader(file, delimiter=";")
     next(reader)  # Pula o cabeçalho
 

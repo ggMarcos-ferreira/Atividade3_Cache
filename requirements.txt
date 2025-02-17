@@ -1,4 +1,4 @@
-flask
-psycopg2
-redis
-requests
+Flask == 3.1.0
+psycopg2 == 2.9.10
+redis == 5.2.1
+requests == 2.32.3
