@@ -2,7 +2,6 @@ import psycopg2
 import csv
 import os
 
-# Configuração da conexão com o PostgreSQL
 conn = psycopg2.connect(
     dbname=os.getenv("DB_NAME", "cbo_db"),
     user=os.getenv("DB_USER", "postgres"),
@@ -13,13 +12,11 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 
-# Caminho do arquivo CSV dentro do contêiner
 csv_file = "/app/cbo.csv" 
 
-# Lendo e inserindo dados no banco
 with open(csv_file, mode="r", encoding="ISO-8859-1") as file:
     reader = csv.reader(file, delimiter=";")
-    next(reader)  # Pula o cabeçalho
+    next(reader)  
 
     for row in reader:
         codigo, titulo = row
@@ -28,7 +25,6 @@ with open(csv_file, mode="r", encoding="ISO-8859-1") as file:
             (codigo, titulo, "")
         )
 
-# Commit e fechamento da conexão
 conn.commit()
 cur.close()
 conn.close()

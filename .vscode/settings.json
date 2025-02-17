@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "cbo_db",
+      "database": "cbo_db",
+      "username": "postgres",
+      "password": ""
+    }
+  ]
+}
