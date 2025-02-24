@@ -13,6 +13,13 @@ services:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 200M
 
   redis:
     image: redis:latest
@@ -20,6 +27,13 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
 
   api:
     build: .
@@ -40,6 +54,16 @@ services:
       REDIS_PORT: 6379
     volumes:
       - ./cbo.csv:/app/cbo.csv
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 256M
+      placement:
+        constraints:
+          - node.role == worker
 
 volumes:
   pg_data:
