@@ -8,9 +8,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Porta do PostgreSQL no host
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data  # Volume para persistência dos dados
     deploy:
       replicas: 1
       restart_policy:
@@ -21,7 +21,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6380:6379"  # Porta do Redis no host para evitar conflito
+      - "6380:6379"  # Porta do Redis no host para evitar conflito com a porta 6379
     deploy:
       replicas: 1
       restart_policy:
@@ -35,7 +35,7 @@ services:
       - db
       - redis
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Porta da API no host
     environment:
       DB_HOST: db
       DB_PORT: 5432
