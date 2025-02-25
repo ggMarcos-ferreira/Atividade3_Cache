@@ -11,15 +11,23 @@ services:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     networks:
-      overlay
+      - default  # Adiciona a rede à lista
 
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     networks:
-      - overlay
+      - default  # Adiciona a rede à lista
 
   api:
     image: ggabrielfferreira19/minha-api-flask
@@ -36,12 +44,16 @@ services:
       DB_PASSWORD: postgres
       REDIS_HOST: redis
       REDIS_PORT: 6379
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
     networks:
-      overlay
+      - default  # Adiciona a rede à lista
 
 volumes:
   pg_data: {}
 
 networks:
-  overlay:
-    external: true
+  default:
+    driver: overlay  # Configuração da rede overlay
