@@ -7,20 +7,17 @@ import socket
 
 app = Flask(__name__)
 
-# Configuração do SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db/cbo_db")
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('DB_USER', 'postgres')}:{os.getenv('DB_PASSWORD', 'postgres')}@{os.getenv('DB_HOST', 'db')}:{os.getenv('DB_PORT', 5432)}/{os.getenv('DB_NAME', 'cbo_db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Redis client
 redis_client = redis.StrictRedis(
-    host=os.getenv("REDIS_HOST", "localhost"),
+    host=os.getenv("REDIS_HOST", "redis"),
     port=int(os.getenv("REDIS_PORT", 6379)),
     db=0,
     decode_responses=True
 )
 
-# Modelo para a tabela cbo
 class Cbo(db.Model):
     __tablename__ = 'cbo'
 
@@ -40,7 +37,7 @@ def get_cbo(code):
             "code": cbo.code,
             "title": cbo.title,
             "description": cbo.description,
-            "processed_by": socket.gethostname()  
+            "processed_by": socket.gethostname()
         }
         redis_client.setex(code, 3600, json.dumps(result))
         return jsonify(result)
