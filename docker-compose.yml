@@ -12,14 +12,14 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
-      - minha_rede_overlay
+      overlay
 
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
     networks:
-      - minha_rede_overlay
+      - overlay
 
   api:
     image: ggabrielfferreira19/minha-api-flask
@@ -37,11 +37,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
     networks:
-      - minha_rede_overlay
+      overlay
 
 volumes:
   pg_data: {}
 
 networks:
-  minha_rede_overlay:
+  overlay:
     external: true
