@@ -1,11 +1,18 @@
 from flask import Flask, jsonify
-import psycopg2
+from flask_sqlalchemy import SQLAlchemy
 import redis
 import json
 import os
-import socket  
+import socket
 
 app = Flask(__name__)
+
+# Configuração do SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@db/cbo_db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Redis client
 redis_client = redis.StrictRedis(
     host=os.getenv("REDIS_HOST", "localhost"),
     port=int(os.getenv("REDIS_PORT", 6379)),
@@ -13,14 +20,13 @@ redis_client = redis.StrictRedis(
     decode_responses=True
 )
 
-conn = psycopg2.connect(
-    dbname=os.getenv("DB_NAME", "cbo_db"),
-    user=os.getenv("DB_USER", "postgres"),
-    password=os.getenv("DB_PASSWORD", "postgres"),
-    host=os.getenv("DB_HOST", "localhost"),
-    port=int(os.getenv("DB_PORT", 5432))
-)
-cur = conn.cursor()
+# Modelo para a tabela cbo
+class Cbo(db.Model):
+    __tablename__ = 'cbo'
+
+    code = db.Column(db.String, primary_key=True)
+    title = db.Column(db.String)
+    description = db.Column(db.String)
 
 @app.route('/cbo/<code>', methods=['GET'])
 def get_cbo(code):
@@ -28,13 +34,12 @@ def get_cbo(code):
     if cached_data:
         return jsonify(json.loads(cached_data))
 
-    cur.execute("SELECT code, title, description FROM cbo WHERE code = %s", (code,))
-    row = cur.fetchone()
-    if row:
+    cbo = Cbo.query.filter_by(code=code).first()
+    if cbo:
         result = {
-            "code": row[0],
-            "title": row[1],
-            "description": row[2],
+            "code": cbo.code,
+            "title": cbo.title,
+            "description": cbo.description,
             "processed_by": socket.gethostname()  
         }
         redis_client.setex(code, 3600, json.dumps(result))
