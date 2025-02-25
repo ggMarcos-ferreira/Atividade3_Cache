@@ -16,18 +16,18 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - default  # Adiciona a rede à lista
+      - default
 
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6380:6379"  # Porta do Redis no host para evitar conflito
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
     networks:
-      - default  # Adiciona a rede à lista
+      - default
 
   api:
     image: ggabrielfferreira19/minha-api-flask
@@ -49,11 +49,11 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-      - default  # Adiciona a rede à lista
+      - default
 
 volumes:
-  pg_data: {}
+  pg_data: {}  # Volume para persistência de dados do PostgreSQL
 
 networks:
   default:
-    driver: overlay  # Configuração da rede overlay
+    driver: overlay  # Rede overlay para comunicação entre contêineres no Swarm
