@@ -26,7 +26,7 @@ services:
         condition: on-failure
 
   api:
-    image: meu_usuario/minha-api-flask
+    image: ggabrielfferreira19/minha-api-flask
     depends_on:
       - db
       - redis
@@ -47,3 +47,7 @@ services:
 
 volumes:
   pg_data: {}
+
+networks:
+  default:
+    driver: overlay
